@@ -1,0 +1,1 @@
+Hand tracking module with OPENCV and MEDIAPIPE
