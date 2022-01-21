@@ -1,2 +1,2 @@
 <b>HAND TRACKING PYTHON MODULE</b>
-<p>Hand tracking module with <b>OPENCV</b> and <b>MEDIAPIPE</b></p>
+<p>Python module to track the user's hands with <b>OPENCV</b> and <b>MEDIAPIPE</b></p>
