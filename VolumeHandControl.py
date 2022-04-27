@@ -81,7 +81,11 @@ while True:
 
     # Frame Rate
     cTime = time.time()
-    fps = 1 / (cTime - pTime)
+    delta_time = cTime - pTime
+    if delta_time == 0:
+        fps = 0
+    else:
+        fps = 1 / (cTime - pTime)
     pTime = cTime
     cv2.putText(img, f'FPS: {int(fps)}', (40, 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2)
 
