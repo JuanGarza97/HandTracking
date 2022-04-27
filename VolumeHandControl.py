@@ -34,7 +34,7 @@ while True:
     img = cv2.flip(img, 1)
     hands = detector.find_hands(img)
 
-    # right_hand = detector.get_hand(hands, htm.HandType.Right)
+    # right_hand = detector.get_hand(hands, HandType.Right)
 
     for hand in hands:
         if hand.type == "Right":

@@ -8,6 +8,7 @@ import mediapipe as mp
 import time
 import math
 from enum import IntEnum, Enum
+from strenum import StrEnum
 import numpy as np
 
 
@@ -19,7 +20,7 @@ class Fingers(IntEnum):
     Pinky = 20
 
 
-class HandType(Enum):
+class HandType(StrEnum):
     Right = "Right"
     Left = "Left"
 
@@ -37,33 +38,35 @@ class Hand:
 
     def fingers_up(self) -> list[int]:
         fingers = [0, 0, 0, 0, 0]
-        hand_type = self.type
-        landmarks = self.landmarks
 
         # Thumb
-        if hand_type == "Right":
-            if landmarks[self.tipIds[0]][0] < landmarks[self.tipIds[0] - 1][0]:
+        if self.type == "Right":
+            if self.landmarks[self.tipIds[0]][0] < self.landmarks[self.tipIds[0] - 1][0]:
                 fingers[0] = 1
         else:
-            if landmarks[self.tipIds[0]][0] > landmarks[self.tipIds[0] - 1][0]:
+            if self.landmarks[self.tipIds[0]][0] > self.landmarks[self.tipIds[0] - 1][0]:
                 fingers[0] = 1
 
         # Other 4 Fingers
         for i in range(1, 5):
-            if landmarks[self.tipIds[i]][1] < landmarks[self.tipIds[i] - 2][1]:
+            if self.landmarks[self.tipIds[i]][1] < self.landmarks[self.tipIds[i] - 2][1]:
                 fingers[i] = 1
 
         return fingers
 
+    @staticmethod
+    def __to_degrees(angle):
+        angle = math.degrees(angle)
+        if angle < 0:
+            angle = angle + 360
+        return angle
+
     def pointing_direction(self, finger: Fingers = Fingers.Index, degrees: bool = True) -> int:
-        landmarks = self.landmarks
-        x1, y1 = landmarks[finger][1], landmarks[finger][2]
-        x2, y2 = landmarks[finger - 3][1], landmarks[finger - 3][2]
+        x1, y1 = self.landmarks[finger][1], self.landmarks[finger][2]
+        x2, y2 = self.landmarks[finger - 3][1], self.landmarks[finger - 3][2]
         angle = math.atan2(y2 - y1, x1 - x2)
         if degrees:
-            angle = math.degrees(angle)
-            if angle < 0:
-                angle = angle + 360
+            angle = self.__to_degrees(angle)
         return int(angle)
 
     def find_angle(self, finger1: Fingers, finger2: Fingers) -> int:
@@ -123,8 +126,7 @@ class HandDetector:
         return hands
 
     @staticmethod
-    def get_hand(hands: list[Hand], type_of_hand: HandType = HandType.Right) -> Hand or None:
-        hand_type = type_of_hand.value
+    def get_hand(hands: list[Hand], hand_type: HandType = HandType.Right) -> Hand or None:
         for hand in hands:
             if hand.type == hand_type:
                 return hand
